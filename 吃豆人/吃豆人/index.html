@@ -1,0 +1,326 @@
+<html>
+
+<head>
+	<meta charset="utf8">
+	<title>Pac-Man.吃豆人游戏</title>
+
+	<meta name="description" content="吃豆人">
+	<meta name="keywords" content="吃豆人">
+	<link rel="shortcut icon" href="1.png">
+	<style>
+		html {
+			width: 100%;
+			height: 100%;
+			background: transparent;
+		}
+
+		body {
+			background: rgba(0, 0, 0, 0.5);
+			width: 100%;
+			height: 100%;
+		}
+
+		.body-class {
+			background: #FFFFFF;
+		}
+
+		.modal {
+			width: 300px;
+			margin: 0 auto;
+			position: relative;
+			top: 50%;
+			/*偏移*/
+			background: #ffffff;
+			border-radius: 5px;
+		}
+
+		.confirm {
+			height: 50px;
+			border-top: 1px solid #eee;
+			display: flex;
+		}
+
+		.confirm>span {
+			flex: 1;
+			height: 50px;
+			line-height: 50px;
+			font-size: 16px;
+			text-align: center;
+		}
+
+		.confirm>span:nth-child(1) {
+			color: red;
+		}
+
+		.confirm>span:nth-child(2) {
+			border-left: 1px solid #eee;
+		}
+
+		.title {
+			text-align: center;
+			border-bottom: 1px solid #eee;
+			margin-bottom: 10px;
+		}
+
+		.title>p {
+			height: 40px;
+			line-height: 40px;
+			text-align: center;
+			font-size: 18px;
+			font-weight: bold;
+
+		}
+
+		.important {
+			color: red;
+		}
+
+		.close-but:hover {
+			opacity: 0.5;
+		}
+
+		.content {
+			max-height: 500px;
+			overflow-y: auto;
+		}
+
+		.content>span {
+			padding: 0 10px 10px 10px;
+		}
+
+		.hidden {
+			display: none
+		}
+
+		.div {
+			display: inline-block;
+			padding: .3em .5em;
+			background-image: linear-gradient(#ddd, #bbb);
+			border: 1px solid rgba(0, 0, 0, .2);
+			border-radius: .3em;
+			box-shadow: 0 1px white inset;
+			text-align: center;
+			text-shadow: 0 1px 1px black;
+			color: white;
+			font-weight: bold;
+		}
+
+		.div:active {
+			box-shadow: .05em .1em .2em rgba(0, 0, 0, .6) inset;
+			border-color: rgba(0, 0, 0, .3);
+			background: #bbb;
+		}
+
+		* {
+			padding: 0;
+			margin: 0;
+		}
+
+		.wrapper {
+			width: 960px;
+			margin: 0 auto;
+			color: #999;
+		}
+
+		canvas {
+			display: block;
+			background: #000;
+		}
+
+		.mod-game .info {
+			padding: 10px 0;
+			margin-bottom: 5px;
+			line-height: 20px;
+			text-align: center;
+			color: #000000;
+		}
+
+		.mod-game .info p {
+			line-height: 20px;
+			font-size: 14px;
+			color: #000000;
+		}
+
+		.mod-game .intro {
+			padding: 10px 15px;
+			background: #f8f8f8;
+			border-radius: 5px;
+		}
+
+		.mod-game .intro p {
+			line-height: 22px;
+			text-indent: 2em;
+			font-size: 14px;
+			color: #666;
+		}
+
+		.mod-button {
+			height: 32px;
+			padding: 15px 0;
+			text-align: center;
+		}
+
+		.mod-button span,
+		.mod-button a {
+			vertical-align: middle;
+		}
+
+		.mod-button .btn {
+			display: inline-block;
+			padding: 0 12px;
+			line-height: 26px;
+			color: #24292f;
+			border: 1px solid #dddede;
+			text-decoration: none;
+			font-size: 13px;
+			color: #24292f;
+			border-radius: 2px;
+		}
+	</style>
+	<script type="text/javascript">
+	</script>
+	<script>
+		function buttonClick() {
+			window.alert("控制吃豆人吃掉迷宫里面的所有豆子，同时尽可能躲避小鬼怪。一旦吃豆人吃掉能量药丸，它就可以在一定时间内反过来欺负小鬼怪了。特别值得一提的是，迷宫的左右出口是相通的，灵活应用往往带来柳暗花明的奇效。");
+		}
+	</script>
+	<script>
+    window.alert = alert;
+    function alert(data, callback) { //回调函数
+        var alert_bg = document.createElement('div');
+        alert_box = document.createElement('div'),
+            alert_text = document.createElement('div'),
+            alert_btn = document.createElement('div'),
+            textNode = document.createTextNode(data ? data : ''),
+            btnText = document.createTextNode('确 定');
+
+        // 控制样式
+        css(alert_bg, {//背景颜色设置
+            'position': 'fixed',
+            'top': '-600',
+            'left': '0',
+            'right': '0',
+            'bottom': '0',
+            'background-color': 'rgba(0, 0, 0, 0.1)',
+            'z-index': '999999999'
+        });
+
+        css(alert_box, {//控制盒子大小、背景颜色上下边距
+            'width': '500px',
+            'max-width': '90%',
+            'font-size': '16px',
+            'font-weight': 'bold',
+            'text-align': 'center',
+            'background-color': '#D3D3D3',
+            'border-radius': '15px',
+            'position': 'absolute',
+            'top': '50%',
+            'left': '50%',
+            'transform': 'translate(-50%, -50%)'
+            
+        });
+
+        css(alert_text, {
+            'padding': '10px 15px',
+            'border-bottom': '1px solid #ddd'
+        });
+
+        css(alert_btn, {
+            'padding': '10px 0',
+            'color': '#007aff',
+            'font-weight': '600',
+            'cursor': 'pointer'
+        });
+
+        // 内部结构套入
+        alert_text.appendChild(textNode);
+        alert_btn.appendChild(btnText);
+        alert_box.appendChild(alert_text);
+        alert_box.appendChild(alert_btn);
+        alert_bg.appendChild(alert_box);
+
+        // 总体显示到页面内
+        document.getElementsByTagName('body')[0].appendChild(alert_bg);
+
+        // 肯定绑定点击事件删除标签
+        alert_btn.onclick = function() {
+            alert_bg.parentNode.removeChild(alert_bg);
+            if (typeof callback === 'function') {
+                callback(); //回调
+            }
+        }
+    }
+
+    function css(targetObj, cssObj) {
+        var str = targetObj.getAttribute("style") ? targetObj.getAttribute('style') : '';
+        for (var i in cssObj) {
+            str += i + ':' + cssObj[i] + ';';
+        }
+        targetObj.style.cssText = str;
+    }
+//点击确定跳转到指定地址
+    alert('提示信息!', function() {
+        window.location.href = 'http://cn.bing.com';
+    });
+</script>
+
+
+
+<body>
+
+	</head>
+
+	<body>
+		<div class="wrapper">
+			<div class="mod-game">
+				<canvas id="canvas" width="960" height="640">不支持画布</canvas>
+				<div class="info">
+					<p>按 [空格键] 暂停或继续</p>
+					<p>Press [space] to pause or continue</p>
+				</div>
+			</div>
+
+		</div>
+		<script src="game.js"></script>
+		<script src="index.js"></script>
+		<script async defer src="https://buttons.github.io/buttons.js"></script>
+		<script>
+			var _hmt = _hmt || [];
+			(function () {
+				var hm = document.createElement("script");
+				hm.src = "https://hm.baidu.com/hm.js?b86879c9cc57dd112fe1f7dd75206b82";
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(hm, s);
+			})();
+		</script>
+		<script>
+			(function () {
+				var bp = document.createElement('script');
+				var curProtocol = window.location.protocol.split(':')[0];
+				if (curProtocol === 'https') {
+					bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+				}
+				else {
+					bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+				}
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(bp, s);
+			})();
+		</script>
+		<audio id="my" src="1.mp3"></audio>
+		<div align="center" style="position:absolute;top:20px;right: 300;">
+			<input class="div" type="button" onclick="document.getElementById('my').play()" value='游戏音乐:开' />
+		</div>
+		<div align="center" style="position:absolute;top:60px;right: 300;">
+			<input class="div" type="button" onclick="document.getElementById('my').pause()" value='游戏音乐:关' />
+		</div>
+		<div style="position:absolute;top:100px;right: 300px;color:white;">
+			<input class="div" type="button" value="游戏简介" onclick="buttonClick();">
+		</div>
+
+	</body>
+
+</html>
+</body>
+
+</html>
